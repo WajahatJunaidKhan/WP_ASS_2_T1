@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSA Encryption/Decryption</title>
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+<body>
+    <div class="container">
+        <h1>RSA Encryption/Decryption</h1>
+
+        <div id="keyGenerationSection">
+            <button onclick="generateKeys()">Generate Keys</button>
+            <div>
+                <label for="publicKey">Public Key:</label><br>
+                <textarea id="publicKey" rows="4" cols="50" readonly></textarea>
+            </div>
+            <div>
+                <label for="privateKey">Private Key:</label><br>
+                <textarea id="privateKey" rows="4" cols="50" readonly></textarea>
+            </div>
+            <button onclick="copyKeysAndProceed()">Copy Keys & Proceed</button>
+        </div>
+
+        <div id="encryptionDecryptionSection" style="display:none;">
+            <textarea id="plaintext" placeholder="Enter text to encrypt"></textarea>
+            <button onclick="encrypt()">Encrypt</button>
+            <textarea id="ciphertext" placeholder="Encrypted text will appear here" readonly></textarea>
+            <button onclick="decrypt()">Decrypt</button>
+            <textarea id="decryptedtext" placeholder="Decrypted text will appear here" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        const gcd = (a, b) => {
+            while (b !== 0) {
+                [a, b] = [b, a % b];
+            }
+            return a;
+        };
+
+        const modInverse = (a, m) => {
+            for (let x = 1; x < m; x++) {
+                if ((a * x) % m === 1) {
+                    return x;
+                }
+            }
+            return 1;
+        };
+
+        const generateKeys = () => {
+            const p = 61; 
+            const q = 53; 
+            const n = p * q;
+            const phi = (p - 1) * (q - 1);
+            let e = 17; 
+            while (gcd(e, phi) !== 1) {
+                e++;
+            }
+            const d = modInverse(e, phi);
+
+            document.getElementById('publicKey').value = `(${e}, ${n})`;
+            document.getElementById('privateKey').value = `(${d}, ${n})`;
+        };
+
+        const copyKeysAndProceed = () => {
+        const publicKey = document.getElementById('publicKey').value;
+        const privateKey = document.getElementById('privateKey').value;
+
+        const url = new URL('http://localhost/WP%20ASS%202/Task1/page2.html');
+        url.searchParams.append('publicKey', publicKey);
+        url.searchParams.append('privateKey', privateKey);
+
+        window.location.href = url.href;
+        };
+    </script>
+</body>
+</html>

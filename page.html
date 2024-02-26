@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSA Encryption/Decryption</title>
+</head>
+<body>
+    <div class="container">
+        <h1>RSA Encryption/Decryption</h1>
+
+        <div id="encryptionSection" style="float: left; width: 50%;">
+            <h2>Encryption</h2>
+            <label for="publicKey">Public Key (e, n):</label><br>
+            <textarea id="publicKey" rows="4" cols="50" readonly></textarea><br>
+            <label for="plaintext">Plaintext:</label><br>
+            <textarea id="plaintext" rows="4" cols="50"></textarea><br>
+            <label for="ciphertext">Ciphertext:</label><br>
+            <textarea id="ciphertext" rows="4" cols="50" readonly></textarea><br>
+            <button onclick="encrypt()">Encrypt</button><br>
+        </div>
+
+        <div id="decryptionSection" style="float: right; width: 50%;">
+            <h2>Decryption</h2>
+            <label for="privateKey">Private Key (d, n):</label><br>
+            <textarea id="privateKey" rows="4" cols="50"></textarea><br>
+            <label for="ciphertextToDecrypt">Ciphertext:</label><br>
+            <textarea id="ciphertextToDecrypt" rows="4" cols="50"></textarea><br>
+            <label for="decryptedtext">Plaintext:</label><br>
+            <textarea id="decryptedtext" rows="4" cols="50" readonly></textarea><br>
+            <button onclick="decrypt()">Decrypt</button><br>
+        </div>
+    </div>
+
+    <script>
+        const rsaEncrypt = (plaintext, e, n) => {
+            let ciphertext = '';
+            for (let i = 0; i < plaintext.length; i++) {
+                let charCode = plaintext.charCodeAt(i);
+                let encryptedCharCode = BigInt(charCode) ** BigInt(e) % BigInt(n);
+                ciphertext += String.fromCharCode(Number(encryptedCharCode));
+            }
+            return ciphertext;
+        };
+
+        const rsaDecrypt = (ciphertext, d, n) => {
+            let plaintext = '';
+            for (let i = 0; i < ciphertext.length; i++) {
+                let charCode = ciphertext.charCodeAt(i);
+                let decryptedCharCode = BigInt(charCode) ** BigInt(d) % BigInt(n);
+                plaintext += String.fromCharCode(Number(decryptedCharCode));
+            }
+            return plaintext;
+        };
+
+        const encrypt = () => {
+        const plaintext = document.getElementById('plaintext').value;
+        const publicKey = document.getElementById('publicKey').value;
+        console.log('Public Key:', publicKey); 
+
+        const [e, n] = publicKey.substring(1, publicKey.length - 1).split(',').map(Number);
+        console.log('Parsed e:', e); 
+        console.log('Parsed n:', n); 
+
+        const ciphertext = rsaEncrypt(plaintext, e, n);
+
+        document.getElementById('ciphertext').value = ciphertext;
+        };
+
+        const decrypt = () => {
+        const ciphertext = document.getElementById('ciphertextToDecrypt').value;
+        const privateKey = document.getElementById('privateKey').value;
+        console.log('Private Key:', privateKey); 
+
+        const [d, n] = privateKey.substring(1, privateKey.length - 1).split(',').map(Number);
+        console.log('Parsed d:', d); 
+        console.log('Parsed n:', n); 
+
+        const plaintext = rsaDecrypt(ciphertext, d, n);
+
+        document.getElementById('decryptedtext').value = plaintext;
+        };
+
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const publicKey = urlParams.get('publicKey');
+        const privateKey = urlParams.get('privateKey');
+
+        document.getElementById('publicKey').value = publicKey;
+        document.getElementById('privateKey').value = privateKey;
+    </script>
+</body>
+</html>
